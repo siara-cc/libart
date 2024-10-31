@@ -7,7 +7,6 @@
 #include <strings.h>
 #include <stdio.h>
 #include <assert.h>
-#include "art.h"
 
 #ifdef __i386__
     #include <emmintrin.h>
@@ -826,8 +825,9 @@ class art_trie {
     // Returns the size in bytes of the subtrie.
     size_t art_size_in_bytes_at(const art_node *n) {
         if (IS_LEAF(n)) {
-            art_leaf *l = LEAF_RAW(n);
-            return malloc_size(l) - l->key_len; // sizeof(art_leaf) + l->key_len;
+            //art_leaf *l = LEAF_RAW(n);
+            return sizeof(art_leaf); // + l->key_len;
+            // return malloc_size(l) - l->key_len; // sizeof(art_leaf) + l->key_len;
         }
         size_t size = 0;
         union {
@@ -839,21 +839,24 @@ class art_trie {
         int i, idx;
         switch (n->type) {
             case NODE4: {
-                size += malloc_size(n); // sizeof(art_node4);
+                size += sizeof(art_node4);
+                // size += malloc_size(n); // sizeof(art_node4);
                 p.p1 = (art_node4*)n;
                 for (i=0;i<n->num_children;i++) {
                     size += art_size_in_bytes_at(p.p1->children[i]);
                 }
             } break;
             case NODE16: {
-                size += malloc_size(n); // sizeof(art_node16);
+                size += sizeof(art_node16);
+                // size += malloc_size(n); // sizeof(art_node16);
                 p.p2 = (art_node16*)n;
                 for (i=0;i<n->num_children;i++) {
                     size += art_size_in_bytes_at(p.p2->children[i]);
                 }
             } break;
             case NODE48: {
-                size += malloc_size(n); // sizeof(art_node48);
+                size += sizeof(art_node48);
+                // size += malloc_size(n); // sizeof(art_node48);
                 p.p3 = (art_node48*)n;
                 for (i=0;i<256;i++) {
                     idx = ((art_node48*)n)->keys[i]; 
@@ -862,7 +865,8 @@ class art_trie {
                 }
             } break;
             case NODE256: {
-                size += malloc_size(n); // sizeof(art_node256);
+                size += sizeof(art_node256);
+                // size += malloc_size(n); // sizeof(art_node256);
                 p.p4 = (art_node256*)n;
                 for (i=0;i<256;i++) {
                     if (p.p4->children[i])
