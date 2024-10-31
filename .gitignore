@@ -3,3 +3,6 @@
 *~
 test_runner
 src/libart.so
+art_insert*
+!art_insert.cpp
+

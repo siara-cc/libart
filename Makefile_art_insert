@@ -1,0 +1,24 @@
+C = gcc
+CXXFLAGS = -pthread -march=native
+CXX = g++
+CXXFLAGS = -pthread -std=c++11 -march=native
+INCLUDES = -I./src
+L_FLAGS = -lsnappy -llz4 -lbrotlienc -lbrotlidec -lz
+M_FLAGS = -mbmi2 -mpopcnt
+#OBJS = build/imain.o
+
+opt: CXXFLAGS += -g -O3 -funroll-loops -DNDEBUG
+opt: art_insert
+
+debug: CXXFLAGS += -g -O0 -fno-inline
+debug: art_insert
+
+release: CXXFLAGS += -O3 -fno-inline
+release: art_insert
+
+clean:
+	rm art_insert
+	rm -rf art_insert.dSYM
+
+art_insert: art_insert.cpp cpp_src/art.hpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -std=c++11 art_insert.cpp -o art_insert
